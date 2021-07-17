@@ -85,4 +85,8 @@ export default class Produto extends Model {
     );
     return this;
   }
+
+  static associate(models) {
+    this.hasMany(models.Item, { foreignKey: 'produto_id' });
+  }
 }

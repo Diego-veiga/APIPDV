@@ -57,5 +57,6 @@ export default class Venda extends Model {
 
   static associate(models) {
     this.belongsTo(models.StatusPedido, { foreignKey: 'status_id' });
+    this.hasMany(models.Item, { foreignKey: 'venda_id' });
   }
 }
