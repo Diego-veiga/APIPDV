@@ -4,8 +4,9 @@ import Produto from '../model/Produto';
 import StatusPedido from '../model/statusPedido';
 import Venda from '../model/Vendas';
 import item from '../model/items';
+import User from '../model/User';
 
-const models = [Produto, StatusPedido, Venda, item];
+const models = [Produto, StatusPedido, Venda, item, User];
 
 const connection = new Sequelize(databaseConfig);
 

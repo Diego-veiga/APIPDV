@@ -5,6 +5,7 @@ import produtoRouter from './src/router/produtoRouter';
 import vendaRouter from './src/router/vendaRouter';
 import statusPedidoRouter from './src/router/statusPedidoRouter';
 import itemRouter from './src/router/itemRouter';
+import userRouter from './src/router/userRouter';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ class App {
     this.app.use('/venda', vendaRouter);
     this.app.use('/statusPedido', statusPedidoRouter);
     this.app.use('/item', itemRouter);
+    this.app.use('/user', userRouter);
   }
 }
 
