@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import vendaController from '../controller/vendaController';
+import tokenRequired from '../middleware/tokenRequired';
 
 const router = new Router();
 
-router.post('/', vendaController.store);
-router.get('/', vendaController.index);
-router.get('/:id', vendaController.show);
-router.delete('/:id', vendaController.delete);
+router.post('/', tokenRequired, vendaController.store);
+router.get('/', tokenRequired, vendaController.index);
+router.get('/:id', tokenRequired, vendaController.show);
+router.delete('/:id', tokenRequired, vendaController.delete);
 
 export default router;
