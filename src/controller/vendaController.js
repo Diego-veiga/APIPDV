@@ -1,5 +1,6 @@
-import { Op } from 'sequelize';
+import { Op, QueryTypes, Sequelize } from 'sequelize';
 import Venda from '../model/Vendas';
+import Item from '../model/items';
 
 class VendaController {
   async store(req, res) {
@@ -7,7 +8,6 @@ class VendaController {
       const newVenda = await Venda.create(req.body);
       return res.status(200).json(newVenda);
     } catch (e) {
-      console.log('ERROR', e);
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
       });
@@ -19,7 +19,6 @@ class VendaController {
       const vendas = await Venda.findAll();
       return res.status(200).json(vendas);
     } catch (e) {
-      console.log('ERROR', e);
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
       });
@@ -32,7 +31,6 @@ class VendaController {
       const venda = await Venda.findByPk(id);
       return res.status(200).json(venda);
     } catch (e) {
-      console.log('ERROR', e);
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
       });
@@ -46,19 +44,43 @@ class VendaController {
         return res.status(400).json({ errors: 'Id não encontrado' });
       }
       const venda = await Venda.findOne({
+        include: Item,
         where: {
           [Op.and]: [{ id }, { status_id: [9, 10] }],
-
         },
       });
       if (!venda) {
-        return res.status(400).json({ message: 'Venda não encontrada ou ja cancelada' });
+        return res
+          .status(400)
+          .json({ message: 'Venda não encontrada ou ja cancelada' });
       }
+
+      if (venda.Items) {
+        const sequelize = new Sequelize(process.env.DATABASE, process.env.DATABASE_USERNAME,
+          process.env.DATABASE_PASSWORD, {
+            host: 'localhost',
+            port: process.env.DATABASE_PORT,
+            dialect: 'mariadb',
+
+            pool: {
+              max: 5,
+              min: 0,
+              acquire: 30000,
+              idle: 10000,
+            },
+
+          });
+
+        await sequelize.query(`update item set cancelado=1 where venda_id=${venda.id}`, { type: QueryTypes.UPDATE });
+      }
+
       venda.status_id = 11;
-      venda.save();
-      return res.status(200).json({ Message: 'Venda cancelada com sucesso' });
+      await venda.save();
+
+      return res
+        .status(200)
+        .json({ Message: 'Venda cancelada com sucesso' });
     } catch (e) {
-      console.log('ERROR', e);
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
       });
