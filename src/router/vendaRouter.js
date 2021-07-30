@@ -7,6 +7,7 @@ const router = new Router();
 router.post('/', tokenRequired, vendaController.store);
 router.get('/', tokenRequired, vendaController.index);
 router.get('/:id', tokenRequired, vendaController.show);
+router.put('/:id', tokenRequired, vendaController.update);
 router.delete('/:id', tokenRequired, vendaController.delete);
 
 export default router;

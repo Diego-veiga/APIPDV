@@ -1,4 +1,6 @@
-import { Op, QueryTypes, Sequelize } from 'sequelize';
+import {
+  Op, QueryTypes, Sequelize,
+} from 'sequelize';
 import Venda from '../model/Vendas';
 import Item from '../model/items';
 
@@ -29,6 +31,40 @@ class VendaController {
     try {
       const { id } = req.params;
       const venda = await Venda.findByPk(id);
+      return res.status(200).json(venda);
+    } catch (e) {
+      return res.status(400).json({
+        errors: e.errors.map((err) => err.message),
+      });
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ errors: 'Para atualziar a venda é necessário informar o id' });
+      }
+      const venda = await Venda.findOne({
+        include: Item,
+        where: {
+          [Op.and]: [
+            { id },
+            { status_id: 9 },
+          ],
+        },
+      });
+      if (!venda) {
+        return res.status(400).json({ errors: 'Venda não encontrada, ou co o status diferente de aberto' });
+      }
+      if (!venda.Items.length) {
+        return res.status(400).json({ errors: 'Venda sem itens não pode ser finalizada' });
+      }
+      const totalItens = venda.Items.reduce((total, item) => total += item.total, 0);
+      venda.valor_liquido = Number(totalItens);
+      venda.valor_total = Number(totalItens);
+      venda.status_id = 10;
+      await venda.save();
       return res.status(200).json(venda);
     } catch (e) {
       return res.status(400).json({

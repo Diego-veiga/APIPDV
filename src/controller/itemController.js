@@ -32,10 +32,10 @@ class ItemController {
         where: { [Op.and]: [{ venda_id }, { produto_id }, { cancelado: false }] },
       });
       if (itemExiste) {
-        itemExiste.preco_produto = produto.preco_produto;
+        itemExiste.preco_produto = produto.preco_venda;
         itemExiste.quantidade += quantidade;
         itemExiste.total = itemExiste.preco_produto * itemExiste.quantidade;
-        itemExiste.save();
+        await itemExiste.save();
         return res.status(200).json(itemExiste);
       }
       const preco_produto = produto.preco_venda;
@@ -51,7 +51,6 @@ class ItemController {
       const newItem = await Item.create(item);
       return res.status(200).json(newItem);
     } catch (e) {
-      console.log('ERROR', e);
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
       });
@@ -73,7 +72,6 @@ class ItemController {
       if (!itens) return res.status(400).json({ errors: 'Nenhum item encontrado para esta venda' });
       return res.status(200).json(itens);
     } catch (e) {
-      console.log('ERRORRR', e);
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
       });
@@ -93,7 +91,6 @@ class ItemController {
       if (!item) return res.status(400).json({ errors: 'Item não encontrado ou  ja cancelado' });
       return res.status(200).json(item);
     } catch (e) {
-      console.log('ERRORRR', e);
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
       });
