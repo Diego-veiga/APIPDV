@@ -42,14 +42,11 @@ export default class Produto extends Model {
               msg: 'O preço de custo precisa ser do tipo numero',
             },
             positivo(value) {
-              if (value <= 0) {
+              if (value < 0) {
                 throw new Error(
                   'O preço de custo precisa ser positivo',
                 );
               }
-            },
-            notEmpty: {
-              msg: 'O campo preco de custo não pode estar vazio',
             },
           },
         },
@@ -61,15 +58,13 @@ export default class Produto extends Model {
               msg: 'A quantidade estoque precisa ser do tipo numero',
             },
             positivo(value) {
-              if (value <= 0) {
+              if (value < 0) {
                 throw new Error(
                   'A quantidade estoque precisa ser positivo',
                 );
               }
             },
-            notEmpty: {
-              msg: 'A quantidade estoque não pode estar vazio',
-            },
+
           },
         },
         ativo: {
